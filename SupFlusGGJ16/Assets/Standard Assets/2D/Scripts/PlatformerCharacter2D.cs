@@ -69,7 +69,7 @@ namespace UnityStandardAssets._2D
             {
                 // Reduce the speed if crouching by the crouchSpeed multiplier
                 move = (crouch ? move*m_CrouchSpeed : move);
-
+                move = (!m_Grounded ? move * .8f : move);
                 // The Speed animator parameter is set to the absolute value of the horizontal input.
                 m_Anim.SetFloat("Speed", Mathf.Abs(move));
 
