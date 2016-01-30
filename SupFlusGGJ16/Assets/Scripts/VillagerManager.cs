@@ -6,18 +6,25 @@ public class VillagerManager : MonoBehaviour {
 
     public Transform    activeVillagerTrans,
                         remainingVillagersTrans,
+                        pastVillagersTrans,
+                        deadVillagersTrans,
                         warpGateEnt,
                         warpGateExit;
 
     Villager activeVillager;
 
     [SerializeField] List<Villager> remainingVillagers;
+    List<PastVillager> pastVillagers;
 
+    List<Action> playerActions;
+
+    Action currentAction;
 
 	// Use this for initialization
 	void Start ()
     {
         remainingVillagers = new List<Villager>();
+        pastVillagers = new List<PastVillager>();
 
         Villager[] villagers = remainingVillagersTrans.GetComponentsInChildren<Villager>();
 
@@ -30,6 +37,7 @@ public class VillagerManager : MonoBehaviour {
             if (player == null)
             {
                 NextVillager();
+                EnterArena();
             }
             else
             {
@@ -37,6 +45,8 @@ public class VillagerManager : MonoBehaviour {
             }
 
             activeVillager.activePlayer = true;
+
+            playerActions = new List<Action>();
         }
 	}
 	
@@ -55,7 +65,13 @@ public class VillagerManager : MonoBehaviour {
 
         if (activeVillager.alive)
         {
+            currentAction = new Action();
+            currentAction.timeStamp = Time.timeSinceLevelLoad;
+            currentAction.pos = activeVillager.transform.position;
+            currentAction.move = activeVillager.xDir;
+            currentAction.health = activeVillager.health;
 
+            playerActions.Add(currentAction);
         }
         else
         {
@@ -74,7 +90,7 @@ public class VillagerManager : MonoBehaviour {
             if(!remainingVillagers[i].advancing &&
                 remainingVillagers[i].transform.localPosition.x < i * -2)
             {
-                Debug.Log("Villager " + i + " is not in his correct place");
+                //Debug.Log("Villager " + i + " is not in his correct place");
                 remainingVillagers[i].SetTarget(i * - 2);
             }
         }
@@ -85,14 +101,38 @@ public class VillagerManager : MonoBehaviour {
     /// </summary>
     void NextVillager()
     {
-        //Prevent 
+        //Prevent previous Villager from being controlled
         if (activeVillager)
+        {
             activeVillager.activePlayer = false;
+            activeVillager.transform.position = activeVillager.startingPos;
+            activeVillager.gameObject.AddComponent<PastVillager>();
+            activeVillager.GetComponent<PastVillager>().Setup(playerActions);
+            activeVillager.transform.parent = pastVillagersTrans;
+            activeVillager.gameObject.layer = LayerMask.NameToLayer("PastVillager");
+            activeVillager.GetComponent<SpriteRenderer>().color = new Color(activeVillager.GetComponent<SpriteRenderer>().color.r,
+                                                                            activeVillager.GetComponent<SpriteRenderer>().color.g,
+                                                                            activeVillager.GetComponent<SpriteRenderer>().color.b,
+                                                                            .5f);
+            pastVillagers.Add(activeVillager.GetComponent<PastVillager>());
+            activeVillager.m_Character.PresentVillager = false;
+        }
+
+        if (playerActions != null)
+        {
+            playerActions.Clear();
+        }
 
         activeVillager = remainingVillagers[0];
         remainingVillagers.RemoveAt(0);
 
         activeVillager.activePlayer = true;
+        activeVillager.transform.parent = activeVillagerTrans;
+
+        foreach(PastVillager pVillager in pastVillagers)
+        {
+            pVillager.t = 0;
+        }
     }
 
     void EnterArena()

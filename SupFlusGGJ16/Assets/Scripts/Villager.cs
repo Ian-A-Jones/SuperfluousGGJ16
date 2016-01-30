@@ -8,11 +8,13 @@ using UnityStandardAssets._2D;
 [RequireComponent(typeof(PlatformerCharacter2D))]
 public class Villager : MonoBehaviour
 {
-    private PlatformerCharacter2D m_Character;
+    public PlatformerCharacter2D m_Character;
     private bool m_Jump;
-    [SerializeField] float xDir;
+    public float xDir;
 
-    private float health = 1;
+    public float health = 1;
+
+    public Vector3 startingPos;
 
     //Target X position for Villager to aim for when they're waiting in queue
     public float targetX;
@@ -39,6 +41,7 @@ public class Villager : MonoBehaviour
     private void Awake()
     {
         m_Character = GetComponent<PlatformerCharacter2D>();
+        startingPos = transform.position;
     }
 
     private void Update()
