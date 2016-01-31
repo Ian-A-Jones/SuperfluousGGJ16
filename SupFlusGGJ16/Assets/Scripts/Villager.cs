@@ -19,6 +19,8 @@ public class Villager : MonoBehaviour
     //Target X position for Villager to aim for when they're waiting in queue
     public float targetX;
 
+    VillagerAnimData animData;
+
     /// <summary>
     /// Whether the Villager is advancing in the queue
     /// </summary>
@@ -82,19 +84,25 @@ public class Villager : MonoBehaviour
     {
         if (activePlayer)
         {
-            // Read the inputs.
-            bool crouch = Input.GetKey(KeyCode.LeftControl);
-
             xDir = ((Input.GetKey(KeyCode.D)) ? 1 : xDir);
             xDir = ((Input.GetKey(KeyCode.A)) ? -1 : xDir);
 
+            animData.move = xDir;
+            animData.jump = m_Jump;
+            animData.attack = Input.GetKey(KeyCode.DownArrow);
+            animData.dead = !alive;
+
             // Pass all parameters to the character control script.
-            m_Character.Move(xDir, crouch, m_Jump);
+            m_Character.Move(animData);
             m_Jump = false;
         }
         else
         {
-            m_Character.Move(xDir, false, false);
+            animData.move = xDir;
+            animData.dead = false;
+            animData.jump = false;
+            animData.attack = false;
+            m_Character.Move(animData);
         }
     }
     

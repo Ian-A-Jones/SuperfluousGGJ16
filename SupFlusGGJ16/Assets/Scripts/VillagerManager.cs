@@ -101,37 +101,40 @@ public class VillagerManager : MonoBehaviour {
     /// </summary>
     void NextVillager()
     {
-        //Prevent previous Villager from being controlled
-        if (activeVillager)
+        if (remainingVillagers.Count > 0)
         {
-            activeVillager.activePlayer = false;
-            activeVillager.transform.position = activeVillager.startingPos;
-            activeVillager.gameObject.AddComponent<PastVillager>();
-            activeVillager.GetComponent<PastVillager>().Setup(playerActions);
-            activeVillager.transform.parent = pastVillagersTrans;
-            activeVillager.gameObject.layer = LayerMask.NameToLayer("PastVillager");
-            activeVillager.GetComponent<SpriteRenderer>().color = new Color(activeVillager.GetComponent<SpriteRenderer>().color.r,
-                                                                            activeVillager.GetComponent<SpriteRenderer>().color.g,
-                                                                            activeVillager.GetComponent<SpriteRenderer>().color.b,
-                                                                            .5f);
-            pastVillagers.Add(activeVillager.GetComponent<PastVillager>());
-            activeVillager.m_Character.PresentVillager = false;
-        }
+            //Prevent previous Villager from being controlled
+            if (activeVillager)
+            {
+                activeVillager.activePlayer = false;
+                activeVillager.transform.position = activeVillager.startingPos;
+                activeVillager.gameObject.AddComponent<PastVillager>();
+                activeVillager.GetComponent<PastVillager>().Setup(playerActions);
+                activeVillager.transform.parent = pastVillagersTrans;
+                activeVillager.gameObject.layer = LayerMask.NameToLayer("PastVillager");
+                activeVillager.GetComponent<SpriteRenderer>().color = new Color(activeVillager.GetComponent<SpriteRenderer>().color.r,
+                                                                                activeVillager.GetComponent<SpriteRenderer>().color.g,
+                                                                                activeVillager.GetComponent<SpriteRenderer>().color.b,
+                                                                                .5f);
+                pastVillagers.Add(activeVillager.GetComponent<PastVillager>());
+                activeVillager.m_Character.PresentVillager = false;
+            }
 
-        if (playerActions != null)
-        {
-            playerActions.Clear();
-        }
+            if (playerActions != null)
+            {
+                playerActions.Clear();
+            }
 
-        activeVillager = remainingVillagers[0];
-        remainingVillagers.RemoveAt(0);
+            activeVillager = remainingVillagers[0];
+            remainingVillagers.RemoveAt(0);
 
-        activeVillager.activePlayer = true;
-        activeVillager.transform.parent = activeVillagerTrans;
+            activeVillager.activePlayer = true;
+            activeVillager.transform.parent = activeVillagerTrans;
 
-        foreach(PastVillager pVillager in pastVillagers)
-        {
-            pVillager.t = 0;
+            foreach (PastVillager pVillager in pastVillagers)
+            {
+                pVillager.t = 0;
+            }
         }
     }
 

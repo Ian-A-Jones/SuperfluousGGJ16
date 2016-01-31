@@ -11,6 +11,8 @@ public class PastVillager : MonoBehaviour {
     public int size;
     public int t = 0;
 
+    VillagerAnimData animData;
+
     private void Awake()
     {
         m_Character = GetComponent<PlatformerCharacter2D>();
@@ -43,7 +45,20 @@ public class PastVillager : MonoBehaviour {
     {
         if (t < actions.Count)
         {
-            m_Character.Move(actions[t].move, false, actions[t].jump);
+
+            animData.move = actions[t].move;
+            animData.jump = actions[t].jump;
+            animData.attack = actions[t].attack;
+            animData.dead = actions[t].dead;
+            m_Character.Move(animData);
+        }
+        else
+        {
+            animData.move = 0;
+            animData.jump = false;
+            animData.attack = false;
+            animData.dead = true;
+            m_Character.Move(animData);
         }
     }
 
