@@ -23,6 +23,10 @@ public class VillagerManager : MonoBehaviour {
     public GameObject   bossTemplate,
                         currentBoss;
 
+    public List<Sprite> Hats;
+
+    public static int totalLives = 0;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -72,6 +76,7 @@ public class VillagerManager : MonoBehaviour {
             currentAction.timeStamp = Time.timeSinceLevelLoad;
             currentAction.pos = activeVillager.transform.position;
             currentAction.move = activeVillager.xDir;
+            currentAction.attack = Input.GetKey(KeyCode.DownArrow);
             currentAction.health = activeVillager.health;
 
             playerActions.Add(currentAction);
@@ -106,11 +111,14 @@ public class VillagerManager : MonoBehaviour {
     /// </summary>
     void NextVillager()
     {
+        totalLives++;
         if (remainingVillagers.Count > 0)
         {
             //Prevent previous Villager from being controlled
             if (activeVillager)
             {
+                Boss.health = 100;
+
                 activeVillager.activePlayer = false;
                 activeVillager.transform.position = activeVillager.startingPos;
                 activeVillager.gameObject.AddComponent<PastVillager>();
@@ -121,6 +129,10 @@ public class VillagerManager : MonoBehaviour {
                                                                                 activeVillager.GetComponent<SpriteRenderer>().color.g,
                                                                                 activeVillager.GetComponent<SpriteRenderer>().color.b,
                                                                                 .5f);
+                activeVillager.transform.Find("Hat").GetComponent<SpriteRenderer>().color = new Color(activeVillager.GetComponent<SpriteRenderer>().color.r,
+                                                                activeVillager.GetComponent<SpriteRenderer>().color.g,
+                                                                activeVillager.GetComponent<SpriteRenderer>().color.b,
+                                                                .5f);
                 pastVillagers.Add(activeVillager.GetComponent<PastVillager>());
                 activeVillager.m_Character.PresentVillager = false;
             }
@@ -136,9 +148,14 @@ public class VillagerManager : MonoBehaviour {
             activeVillager.activePlayer = true;
             activeVillager.transform.parent = activeVillagerTrans;
 
+
+            activeVillager.transform.Find("Hat").gameObject.AddComponent<SpriteRenderer>();
+            activeVillager.transform.Find("Hat").GetComponent<SpriteRenderer>().sprite = Hats[Random.Range(0, Hats.Count - 1)];
+            activeVillager.transform.Find("Hat").GetComponent<SpriteRenderer>().sortingOrder = 5;
             foreach (PastVillager pVillager in pastVillagers)
             {
                 pVillager.t = 0;
+                pVillager.GetComponent<Animator>().SetTrigger("ExitDeath");
             }
         }
     }

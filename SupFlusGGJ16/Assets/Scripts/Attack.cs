@@ -19,7 +19,7 @@ public class Attack : MonoBehaviour
     void OnCollisionEnter2D(Collision2D coll)
     {
         Debug.Log("Collided with " + coll.gameObject.name);
-        if (coll.gameObject.layer == (LayerMask.NameToLayer("Villager")))
+        if (coll.gameObject.layer == (LayerMask.NameToLayer("Villager")) && this.enabled)
         {
             coll.gameObject.GetComponent<Villager>().health--;
         }
