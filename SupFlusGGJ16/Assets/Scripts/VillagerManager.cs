@@ -20,6 +20,9 @@ public class VillagerManager : MonoBehaviour {
 
     Action currentAction;
 
+    public GameObject   bossTemplate,
+                        currentBoss;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -77,6 +80,8 @@ public class VillagerManager : MonoBehaviour {
         {
             //What needs to happen when active Villager dies
             //1. Level resets to start
+            Destroy(currentBoss);
+            currentBoss = Instantiate(bossTemplate);
             //2. previous Villagers begin their tasks
             //3. Take control of next Villager in list
             NextVillager();

@@ -52,7 +52,7 @@ public class PastVillager : MonoBehaviour {
             animData.dead = actions[t].dead;
             m_Character.Move(animData);
         }
-        else
+        else if(t == actions.Count)
         {
             animData.move = 0;
             animData.jump = false;
